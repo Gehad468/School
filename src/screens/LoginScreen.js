@@ -1,17 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView, Alert } from 'react-native';
-import FormField from '../components/FormField';
-import CustomButton from '../components/CustomButton';
+import {  View, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, TextInput, Button, Dialog, Portal, Provider } from 'react-native-paper';
+
 import mainStyles from '../../mainStyle';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {SCHOOL_API_BASE_URL } from '@env';
+import { SCHOOL_API_BASE_URL } from '@env';
 
 const LoginScreen = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [isLogin, setIsLogin] = useState(false);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [dialogMessage, setDialogMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const navigation = useNavigation();
 
     const url = `${SCHOOL_API_BASE_URL}/users/login`;
@@ -29,9 +31,16 @@ const LoginScreen = () => {
         return { response, data };
     }
 
+    const showDialog = (message) => {
+        setDialogMessage(message);
+        setDialogVisible(true);
+    };
+
+    const hideDialog = () => setDialogVisible(false);
+
     const handleLogin = async () => {
         if (form.username === '' || form.password === '') {
-            Alert.alert('Error', 'Please fill in all the fields');
+            showDialog('Please fill in all the fields.');
             return;
         }
 
@@ -44,82 +53,90 @@ const LoginScreen = () => {
             };
 
             const { response, data } = await loginUser(userCredentials);
-            if (response.ok) { 
+            if (response.ok) {
                 await AsyncStorage.setItem('userToken', data.items.token);
                 await AsyncStorage.setItem('userInfo', JSON.stringify(data.items));
-                Alert.alert('Login Successful', `Welcome ${data.items.firstName || 'User'}!`);
+                showDialog(`Login Successful! Welcome ${data.items.firstName || 'User'}`);
                 navigation.navigate('Home');
             } else if (response.status === 403) {
-                Alert.alert('Login Failed', 'Invalid username or password.');
+                showDialog('Login Failed: Invalid username or password.');
             } else {
-                Alert.alert('Error', `Status Code: ${response.status}`);
+                showDialog(`Error: Status Code ${response.status}`);
             }
         } catch (error) {
             console.error('Network error:', error.message);
-            Alert.alert('Error', `Error: ${error.message}`);
+            showDialog(`Error: ${error.message}`);
         } finally {
             setIsLogin(false);
         }
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                <View style={mainStyles.mainContainer}>
-                    <View style={styles.logoContainer}>
-                        <Image source={require('../../assets/favicon.png')} style={{ height: 200 }} resizeMode='contain' />
+        <Provider>
+            <SafeAreaView style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+                    <View style={mainStyles.mainContainer}>
+                        <View style={mainStyles.logoContainer}>
+                            <Image
+                                source={require('../../assets/favicon.png')}
+                                style={{ height: 200 }}
+                                resizeMode="contain"
+                            />
+                        </View>
+                        <Text variant="titleLarge">Login to School</Text>
+
+                        <TextInput
+                            label="Username"
+                            mode="outlined"
+                            placeholder="Enter username "
+                            value={form.username}
+                            onChangeText={(e) => setForm({ ...form, username: e })}
+                            style={{ marginBottom: 10 }}
+                        />
+
+                        <TextInput
+                            label="Password"
+                            mode="outlined"
+                            placeholder="Enter password"
+                            value={form.password}
+                            onChangeText={(e) => setForm({ ...form, password: e })}
+                            secureTextEntry={!showPassword}
+                            right={
+                                <TextInput.Icon
+                                icon={showPassword ? "eye-off" : "eye"}
+                                    onPress={() => setShowPassword(!showPassword)}
+                                    
+                                    color={showPassword? "#665999" : "#663399"}
+                                />
+                            }
+                            style={{ marginBottom: 10 }}
+                        />
+
+                        <Button
+                            mode="contained"
+                            onPress={handleLogin}
+                            loading={isLogin}
+                            disabled={isLogin}
+                            style={{ marginTop: 30 }}
+                        >
+                            Sign in
+                        </Button>
                     </View>
-                    <Text style={mainStyles.mainTitle}>Login to School</Text>
-                    <FormField
-                        title="Username"
-                        placeholder="Enter your username here"
-                        value={form.username}
-                        handleCheckText={(e) => setForm({ ...form, username: e })}
-                        otherStyles={{ marginBottom: 7 }}
-                    />
-                    <FormField
-                        title="Password"
-                        placeholder="Enter your password here"
-                        value={form.password}
-                        handleCheckText={(e) => setForm({ ...form, password: e })}
-                        otherStyles={{ marginBottom: 7 }}
-                        secureTextEntry={true}
-                    />
-                    <CustomButton
-                        title="Sign in"
-                        handlePress={handleLogin}  
-                        style={{ marginBottom: 10 }}
-                        isLoading={isLogin}
-                    />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                </ScrollView>
+                <Portal>
+                    <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+                        <Dialog.Title>Alert</Dialog.Title>
+                        <Dialog.Content>
+                            <Text>{dialogMessage}</Text>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <Button onPress={hideDialog}>OK</Button>
+                        </Dialog.Actions>
+                    </Dialog>
+                </Portal>
+            </SafeAreaView>
+        </Provider>
     );
 };
-
-const styles = StyleSheet.create({
-    logoContainer: {
-        flexDirection: 'row',
-        paddingBottom: 30,
-        paddingTop: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 23,
-        fontWeight: 'bold',
-        color: '#e1dec8',
-        marginBottom: 20,
-    },
-    signUpText: {
-        textAlign: 'center',
-        fontSize: 15,
-        color: '#fff',
-    },
-    signUpLink: {
-        textDecorationLine: 'none',
-        color: '#d5cb75',
-    },
-});
 
 export default LoginScreen;

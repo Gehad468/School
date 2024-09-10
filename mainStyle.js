@@ -3,13 +3,13 @@ import { StyleSheet } from 'react-native';
 const mainStyles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: '#161622',
+        backgroundColor: '#fff',
         padding: 25,
     },
     mainText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#000',
     },
     header: {
         fontSize: 24,
@@ -20,13 +20,15 @@ const mainStyles = StyleSheet.create({
     mainTitle: {
         fontSize: 23,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#000',
         marginBottom: 20,
     },
     logoContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      paddingBottom: 30,
+      paddingTop: 30,
   },
 });
 

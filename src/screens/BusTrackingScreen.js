@@ -4,6 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import {SCHOOL_API_BASE_URL } from '@env';
 
 const BusTrackingScreen = () => {
   const [buses, setBuses] = useState([]);
@@ -16,7 +17,7 @@ const BusTrackingScreen = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       // console.log("tokeeeen",token);
-      const response = await fetch('https://dev.scholaware.com/demo-api/school-api/bus', {
+      const response = await fetch(`${SCHOOL_API_BASE_URL}/bus`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ const BusTrackingScreen = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       // console.log("tokeeeen",token);
-      const response = await fetch('https://dev.scholaware.com/demo-api/school-api/bus-trip', {
+      const response = await fetch(`${SCHOOL_API_BASE_URL}/bus-trip`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +91,7 @@ const BusTrackingScreen = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       // console.log("tokeeeen",token);
-      const response = await fetch('https://dev.scholaware.com/demo-api/school-api/bus-trip-location', {
+      const response = await fetch(`${SCHOOL_API_BASE_URL}/bus-trip-location`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +106,7 @@ const BusTrackingScreen = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        console.error('Failed to save location', data);
+        console.error('Failed to save location');
       }
       Alert.alert('Location Saved', 'Location updated successfully');
     } catch (error) {

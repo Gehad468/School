@@ -7,13 +7,14 @@ import mainStyles from '../../mainStyle';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SCHOOL_API_BASE_URL } from '@env';
 
 const LoginScreen = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [isLogin, setIsLogin] = useState(false);
     const navigation = useNavigation();
 
-    const url = 'https://dev.scholaware.com/demo-api/school-api/users/login';
+    const url = `${SCHOOL_API_BASE_URL}/users/login`;
 
     async function loginUser(userCredentials) {
         const response = await fetch(url, {

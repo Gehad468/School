@@ -1,25 +1,42 @@
+// components/DrawerMenu.js
 import React, { useState } from 'react';
-import { Menu, Appbar } from 'react-native-paper';
+import { Drawer, Button } from 'react-native-paper';
 
-const CustomMenu = () => {
-  const [menuVisible, setMenuVisible] = useState(false);
+const DrawerMenu = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); 
+  const [active, setActive] = useState('dashboard');
 
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen); 
+  };
 
   return (
     <>
-      <Menu
-        visible={menuVisible}
-        onDismiss={closeMenu}
-        anchor={<Appbar.Action icon="menu" color="black" onPress={openMenu} />}
-      >
-        <Menu.Item onPress={() => {}} title="Dashboard" />
-        <Menu.Item onPress={() => {}} title="Profile" />
-        <Menu.Item onPress={() => {}} title="Settings" />
-      </Menu>
+      <Button onPress={toggleDrawer}>
+        {isDrawerOpen ? 'Close Menu' : 'Open Menu'}
+      </Button>
+
+      {isDrawerOpen && (
+        <Drawer.Section title="Menu">
+          <Drawer.Item
+            label="Dashboard"
+            active={active === 'dashboard'}
+            onPress={() => setActive('dashboard')}
+          />
+          <Drawer.Item
+            label="Profile"
+            active={active === 'profile'}
+            onPress={() => setActive('profile')}
+          />
+          <Drawer.Item
+            label="Settings"
+            active={active === 'settings'}
+            onPress={() => setActive('settings')}
+          />
+        </Drawer.Section>
+      )}
     </>
   );
 };
 
-export default CustomMenu;
+export default DrawerMenu;

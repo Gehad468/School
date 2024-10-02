@@ -4,9 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Text, Card, Title, Dialog, Portal, Provider, Appbar, List } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import CustomMenu from '../components/CustomMenu';
+import DrawerMenu from '../components/CustomMenu'; 
 import { SCHOOL_API_BASE_URL } from '@env';
-
 
 const BusTrackingScreen = () => {
   const [buses, setBuses] = useState([]);
@@ -18,10 +17,11 @@ const BusTrackingScreen = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [busDialogVisible, setBusDialogVisible] = useState(false);
 
+  const url = `${SCHOOL_API_BASE_URL}/bus`;
   const fetchBuses = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await fetch(`${SCHOOL_API_BASE_URL}/bus`, {
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -85,10 +85,11 @@ const BusTrackingScreen = () => {
     }, 30000));
   };
 
+  const url3=`${SCHOOL_API_BASE_URL}/bus-trip-location`;
   const saveLocation = async (lat, long) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await fetch(`${SCHOOL_API_BASE_URL}/bus-trip-location`, {
+      const response = await fetch(url3, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,11 +117,8 @@ const BusTrackingScreen = () => {
     setAlertVisible(true);
   };
 
-
-
   const openBusDialog = () => setBusDialogVisible(true);
   const closeBusDialog = () => setBusDialogVisible(false);
-
   const selectBus = (bus) => {
     setSelectedBus(bus.id);
     closeBusDialog();
@@ -138,10 +136,10 @@ const BusTrackingScreen = () => {
   return (
     <Provider>
       <SafeAreaView style={styles.safeArea}>
-      <Appbar.Header>
-          <Appbar.Content title="Bus" />
-          <CustomMenu />
-        </Appbar.Header>
+      
+
+        <DrawerMenu />
+
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Card style={styles.card}>
             <Card.Content>

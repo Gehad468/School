@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,7 +20,7 @@ const AppNavigator = () => {
                 <Stack.Screen name="BusTracking" component={StartTripScreen} options={{headerShown:false}} />
                 <Stack.Screen name="Home" component={TestFetchScreen} options={{headerShown:false}} />
             </Stack.Navigator>
-            <StatusBar backgroundColor='#161622'> </StatusBar>
+            <StatusBar > </StatusBar>
         </NavigationContainer>
     );
 };

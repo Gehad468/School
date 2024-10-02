@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {  ScrollView, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Card, Title } from 'react-native-paper';
+import { Text, Button, Card, Title } from 'react-native-paper';
+import { useCameraPermissions } from 'expo-camera';
 
 const HomeScreen = () => {
     const [roles, setRoles] = useState([]);
     const [isBusTrackingEnabled, setIsBusTrackingEnabled] = useState(false);
     const navigation = useNavigation();
+    const [permission, requestPermission] = useCameraPermissions();
+    const isCameraPermissionGranted = Boolean(permission?.granted);
 
     useEffect(() => {
         const checkUserRoles = async () => {
@@ -23,6 +26,15 @@ const HomeScreen = () => {
 
         checkUserRoles();
     }, []);
+    const handleScan = () => {
+        if (isCameraPermissionGranted) {
+            navigation.navigate('Scan');
+        } else {
+            Alert.alert('Camera permission required', 'You need camera permission to scan QR codes.');
+        }
+    };
+
+   
 
     const handleBusTracking = () => {
         navigation.navigate('BusTracking');
@@ -35,14 +47,25 @@ const HomeScreen = () => {
                     <Card.Content>
                         <Title style={styles.headerText}>Home Screen</Title>
                         {isBusTrackingEnabled && (
-                            <Button 
-                                mode="contained" 
+                            <Button
+                                mode="contained"
                                 onPress={handleBusTracking}
                                 style={styles.button}
                             >
                                 Bus Tracking
                             </Button>
                         )}
+                    <Button
+      mode="contained"
+      onPress={handleScan}
+      disabled={!isCameraPermissionGranted}
+      style={{
+        backgroundColor: isCameraPermissionGranted ? 'black' : 'red',
+        marginTop: 20,
+      }}
+    >
+      Scan Code
+    </Button>
                     </Card.Content>
                 </Card>
             </ScrollView>
@@ -70,7 +93,6 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
         elevation: 5,
-
     },
     headerText: {
         fontSize: 24,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758581628098",
+    "project_id": "expopushnotification-591cf",
+    "storage_bucket": "expopushnotification-591cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758581628098:android:bf57712a1f7f3590de3f5b",
+        "android_client_info": {
+          "package_name": "com.anonymous.School"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOHHu0nFpe09TyQLchDQqZloCWvSXCdeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
